@@ -6,6 +6,8 @@ const CastError = require('../errors/cast-err')
 const ValidationError = require('../errors/validation-err')
 const ConflictError = require('../errors/conflict-err')
 
+const { NODE_ENV, JWT_SECRET } = process.env
+
 // Регистрация пользователя
 const createUser = async (req, res, next) => {
   const { email, password, name } = req.body
@@ -45,9 +47,13 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, 'some-secret-key', {
-        expiresIn: '7d',
-      })
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        {
+          expiresIn: '7d',
+        }
+      )
 
       res.send({ token })
     })
