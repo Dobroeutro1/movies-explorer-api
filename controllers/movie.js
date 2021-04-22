@@ -2,6 +2,7 @@ const Movie = require('../models/movie')
 const NotFoundError = require('../errors/not-found-err')
 const CastError = require('../errors/cast-err')
 const ValidationError = require('../errors/validation-err')
+const ConflictError = require('../errors/conflict-err')
 
 // Возвращает все сохранённые пользователем фильмы
 const getMovie = (req, res, next) => {
@@ -28,7 +29,6 @@ const addMovie = (req, res, next) => {
     thumbnail,
   } = req.body
   const owner = req.user._id
-  console.log('OWNER', owner)
 
   Movie.create({
     country,
@@ -62,6 +62,12 @@ const deleteMovie = (req, res, next) => {
     .then((movie) => {
       if (!movie) {
         throw new NotFoundError('Такой карточки не существует', next)
+      }
+      if (movie.owner.toString() !== req.user._id) {
+        throw new ConflictError(
+          'Вы не можете удалить фильм другого пользователя',
+          next
+        )
       }
 
       return res.send(Movie)

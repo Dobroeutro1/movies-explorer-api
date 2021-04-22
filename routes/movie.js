@@ -2,6 +2,7 @@ const movieRouter = require('express').Router()
 const { celebrate, Joi } = require('celebrate')
 const validator = require('validator')
 const { getMovie, addMovie, deleteMovie } = require('../controllers/movie')
+const enterValidUrl = require('../utils/constants')
 
 // Возвращает все сохранённые пользователем фильмы
 movieRouter.get('/movies', getMovie)
@@ -26,7 +27,7 @@ movieRouter.post(
               return value
             }
 
-            return helper.message('Введите правильную ссылку!')
+            return helper.message(enterValidUrl)
           }),
         trailer: Joi.string()
           .required()
@@ -35,7 +36,7 @@ movieRouter.post(
               return value
             }
 
-            return helper.message('Введите правильную ссылку!')
+            return helper.message(enterValidUrl)
           }),
         thumbnail: Joi.string()
           .required()
@@ -44,7 +45,7 @@ movieRouter.post(
               return value
             }
 
-            return helper.message('Введите правильную ссылку!')
+            return helper.message(enterValidUrl)
           }),
         nameRU: Joi.string().required(),
         nameEN: Joi.string().required(),

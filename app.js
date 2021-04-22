@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const { errors } = require('celebrate')
 const router = require('./routes/router')
 const { requestLogger, errorLogger } = require('./middlewares/logger')
+const serverError = require('./utils/constants')
 
 require('dotenv').config()
 
@@ -27,7 +28,7 @@ app.use(errors())
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err
   res.status(statusCode).send({
-    message: statusCode === 500 ? 'На сервере произошла ошибка' : message,
+    message: statusCode === 500 ? serverError : message,
   })
 
   next()

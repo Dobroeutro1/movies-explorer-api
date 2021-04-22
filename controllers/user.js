@@ -5,6 +5,12 @@ const NotFoundError = require('../errors/not-found-err')
 const CastError = require('../errors/cast-err')
 const ValidationError = require('../errors/validation-err')
 const ConflictError = require('../errors/conflict-err')
+const {
+  checkValidData,
+  emailAlreadyBeenRegistered,
+  idIsNotValid,
+  userNotFound,
+} = require('../utils/constants')
 
 const { NODE_ENV, JWT_SECRET } = process.env
 
@@ -28,13 +34,10 @@ const createUser = async (req, res, next) => {
     )
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError(
-          'Проверьте правильность введеных данных',
-          next
-        )
+        throw new ValidationError(checkValidData, next)
       }
       if (err.code === 11000) {
-        throw new ConflictError('Такой email уже зарегистрирован', next)
+        throw new ConflictError(emailAlreadyBeenRegistered, next)
       }
       err.statusCode = 500
       next(err)
@@ -69,14 +72,14 @@ const getUser = (req, res, next) => {
   User.findOne({ _id })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Нет пользователя с таким id', next)
+        throw new NotFoundError(idIsNotValid, next)
       }
 
       return res.status(200).send({ email: user.email, name: user.name })
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new CastError('Передан не валидный id', next)
+        throw new CastError(idIsNotValid, next)
       }
       err.statusCode = 500
       next(err)
@@ -93,19 +96,16 @@ const updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не найден', next)
+        throw new NotFoundError(userNotFound, next)
       }
       return res.send({ email: user.email, name: user.name })
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError(
-          'Проверьте правильность введеных данных',
-          next
-        )
+        throw new ValidationError(checkValidData, next)
       }
       if (err.name === 'CastError') {
-        throw new CastError('Передан не валидный id', next)
+        throw new CastError(idIsNotValid, next)
       }
       err.statusCode = 500
       next(err)
