@@ -22,7 +22,7 @@ movieRouter.post(
         image: Joi.string()
           .required()
           .custom((value, helper) => {
-            if (validator.isUrl(value)) {
+            if (validator.isURL(value)) {
               return value
             }
 
@@ -31,7 +31,16 @@ movieRouter.post(
         trailer: Joi.string()
           .required()
           .custom((value, helper) => {
-            if (validator.isUrl(value)) {
+            if (validator.isURL(value)) {
+              return value
+            }
+
+            return helper.message('Введите правильную ссылку!')
+          }),
+        thumbnail: Joi.string()
+          .required()
+          .custom((value, helper) => {
+            if (validator.isURL(value)) {
               return value
             }
 
@@ -39,16 +48,6 @@ movieRouter.post(
           }),
         nameRU: Joi.string().required(),
         nameEN: Joi.string().required(),
-        thumbnail: Joi.string()
-          .required()
-          .custom((value, helper) => {
-            if (validator.isUrl(value)) {
-              return value
-            }
-
-            return helper.message('Введите правильную ссылку!')
-          }),
-        movieId: Joi.string().required(),
       })
       .unknown(true),
   }),

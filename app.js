@@ -10,7 +10,7 @@ require('dotenv').config()
 const app = express()
 const { PORT = 3000 } = process.env
 
-mongoose.connect('mongodb://localhost:27017/bitfilmsdb', {
+mongoose.connect(process.env.DATA_BASE_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,

@@ -46,14 +46,6 @@ const movieSchema = new mongoose.Schema({
       message: 'Введите правильную ссылку!',
     },
   },
-  owner: {
-    required: true,
-    type: String,
-  },
-  movieId: {
-    required: true,
-    type: String,
-  },
   nameRU: {
     required: true,
     type: String,
@@ -61,6 +53,10 @@ const movieSchema = new mongoose.Schema({
   nameEN: {
     required: true,
     type: String,
+  },
+  owner: {
+    required: true,
+    type: Object,
   },
 })
 
