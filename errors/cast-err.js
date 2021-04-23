@@ -1,9 +1,8 @@
 class CastError extends Error {
-  constructor(message, next) {
-    super(message);
-    this.statusCode = 400;
-    next();
+  constructor(message) {
+    super(message)
+    this.statusCode = 400
   }
 }
 
-module.exports = CastError;
+module.exports = CastError

@@ -7,6 +7,8 @@ const emailAlreadyBeenRegistered = 'Такой email уже зарегистри
 const idIsNotValid = 'Передан не валидный id'
 const userNotFound = 'Пользователь не найден'
 const EmailPasswordNotValid = 'Неправильные почта или пароль'
+const filmNotFound = 'Такого фильма не существует'
+const dontDeleteFilm = 'Вы не можете удалить фильм другого пользователя'
 
 module.exports = {
   serverError,
@@ -18,4 +20,6 @@ module.exports = {
   idIsNotValid,
   userNotFound,
   EmailPasswordNotValid,
+  filmNotFound,
+  dontDeleteFilm,
 }

@@ -1,9 +1,8 @@
 class ValidationError extends Error {
-  constructor(message, next) {
-    super(message);
-    this.statusCode = 401;
-    next();
+  constructor(message) {
+    super(message)
+    this.statusCode = 401
   }
 }
 
-module.exports = ValidationError;
+module.exports = ValidationError

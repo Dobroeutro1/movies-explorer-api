@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 const jwt = require('jsonwebtoken')
-const needAuth = require('../utils/constants')
+const { emailAlreadyBeenRegistered, needAuth } = require('../utils/constants')
 
 const { NODE_ENV, JWT_SECRET } = process.env
 
@@ -8,7 +8,7 @@ const auth = (req, res, next) => {
   const { authorization } = req.headers
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return res.status(409).send({ message: needAuth })
+    return res.status(409).send({ message: emailAlreadyBeenRegistered })
   }
 
   const token = authorization.replace('Bearer ', '')

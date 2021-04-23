@@ -34,7 +34,7 @@ const createUser = async (req, res, next) => {
     )
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError(checkValidData, next)
+        throw new ValidationError(checkValidData)
       }
       if (err.code === 11000) {
         throw new ConflictError(emailAlreadyBeenRegistered, next)
@@ -72,14 +72,14 @@ const getUser = (req, res, next) => {
   User.findOne({ _id })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(idIsNotValid, next)
+        throw new NotFoundError(idIsNotValid)
       }
 
       return res.status(200).send({ email: user.email, name: user.name })
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new CastError(idIsNotValid, next)
+        throw new CastError(idIsNotValid)
       }
       err.statusCode = 500
       next(err)
@@ -96,16 +96,16 @@ const updateUser = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(userNotFound, next)
+        throw new NotFoundError(userNotFound)
       }
       return res.send({ email: user.email, name: user.name })
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError(checkValidData, next)
+        throw new ValidationError(checkValidData)
       }
       if (err.name === 'CastError') {
-        throw new CastError(idIsNotValid, next)
+        throw new CastError(idIsNotValid)
       }
       err.statusCode = 500
       next(err)

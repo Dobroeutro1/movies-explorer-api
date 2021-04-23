@@ -3,6 +3,11 @@ const NotFoundError = require('../errors/not-found-err')
 const CastError = require('../errors/cast-err')
 const ValidationError = require('../errors/validation-err')
 const ConflictError = require('../errors/conflict-err')
+const {
+  checkValidData,
+  filmNotFound,
+  dontDeleteFilm,
+} = require('../utils/constants')
 
 // Возвращает все сохранённые пользователем фильмы
 const getMovie = (req, res, next) => {
@@ -46,10 +51,7 @@ const addMovie = (req, res, next) => {
     .then((movie) => res.send(movie))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError(
-          'Проверьте правильность введеных данных',
-          next
-        )
+        throw new ValidationError(checkValidData)
       }
       err.statusCode = 500
       next(err)
@@ -58,25 +60,23 @@ const addMovie = (req, res, next) => {
 
 // Удаляет сохранённый фильм по _id
 const deleteMovie = (req, res, next) => {
-  Movie.findByIdAndRemove(req.params.movieId)
+  Movie.findById(req.params.movieId)
     .then((movie) => {
-      if (!movie) {
-        throw new NotFoundError('Такой карточки не существует', next)
-      }
       if (movie.owner.toString() !== req.user._id) {
-        throw new ConflictError(
-          'Вы не можете удалить фильм другого пользователя',
-          next
-        )
+        throw new ConflictError(dontDeleteFilm, next)
+      }
+      if (!movie) {
+        throw new NotFoundError(filmNotFound, next)
       }
 
-      return res.send(Movie)
+      Movie.remove(movie)
+        .then((deletedMovie) => res.send(deletedMovie))
+        .catch(next)
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new CastError('Нет карточки с таким id', next)
+        throw new CastError(filmNotFound, next)
       }
-      err.statusCode = 500
       next(err)
     })
 }

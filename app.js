@@ -1,10 +1,11 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+const helmet = require('helmet')
 const { errors } = require('celebrate')
 const router = require('./routes/router')
 const { requestLogger, errorLogger } = require('./middlewares/logger')
-const serverError = require('./utils/constants')
+const { centralError } = require('./errors/central-err')
 
 require('dotenv').config()
 
@@ -17,6 +18,8 @@ mongoose.connect(process.env.DATA_BASE_URL, {
   useFindAndModify: false,
 })
 
+app.use(helmet())
+
 app.use(requestLogger)
 
 app.use(bodyParser.json())
@@ -26,11 +29,7 @@ app.use(errorLogger)
 
 app.use(errors())
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err
-  res.status(statusCode).send({
-    message: statusCode === 500 ? serverError : message,
-  })
-
+  centralError(err, req, res)
   next()
 })
 
