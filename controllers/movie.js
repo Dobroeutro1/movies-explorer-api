@@ -62,16 +62,16 @@ const addMovie = (req, res, next) => {
 const deleteMovie = (req, res, next) => {
   Movie.findById(req.params.movieId)
     .then((movie) => {
-      if (movie.owner.toString() !== req.user._id) {
-        throw new ConflictError(dontDeleteFilm, next)
-      }
       if (!movie) {
         throw new NotFoundError(filmNotFound, next)
       }
 
+      if (movie.owner.toString() !== req.user._id) {
+        throw new ConflictError(dontDeleteFilm, next)
+      }
       Movie.remove(movie)
         .then((deletedMovie) => res.send(deletedMovie))
-        .catch(next)
+        .catch(next())
     })
     .catch((err) => {
       if (err.name === 'CastError') {

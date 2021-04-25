@@ -17,21 +17,30 @@ const { NODE_ENV, JWT_SECRET } = process.env
 // Регистрация пользователя
 const createUser = async (req, res, next) => {
   const { email, password, name } = req.body
-  bcrypt
-    .hash(password, 8)
-    .then((hash) =>
-      User.create({
-        email,
-        password: hash,
-        name,
-      })
-    )
-    .then((user) =>
-      res.send({
-        email: user.email,
-        name: user.name,
-      })
-    )
+
+  User.find({ email })
+    .then((user) => {
+      if (user.length !== 0) {
+        throw new ConflictError(emailAlreadyBeenRegistered, next)
+      } else {
+        bcrypt
+          .hash(password, 8)
+          .then((hash) => {
+            User.create({
+              email,
+              password: hash,
+              name,
+            })
+          })
+          .then(() => {
+            res.send({
+              email,
+              name,
+            })
+          })
+          .catch(next)
+      }
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new ValidationError(checkValidData)
@@ -39,7 +48,7 @@ const createUser = async (req, res, next) => {
       if (err.code === 11000) {
         throw new ConflictError(emailAlreadyBeenRegistered, next)
       }
-      err.statusCode = 500
+      // err.statusCode = 500
       next(err)
     })
 }

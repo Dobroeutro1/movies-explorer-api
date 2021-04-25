@@ -10,13 +10,19 @@ const { centralError } = require('./errors/central-err')
 require('dotenv').config()
 
 const app = express()
-const { PORT = 3000 } = process.env
 
-mongoose.connect(process.env.DATA_BASE_URL, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-})
+const { PORT = 3000, NODE_ENV, DATA_BASE_URL } = process.env
+
+mongoose.connect(
+  NODE_ENV === 'production'
+    ? DATA_BASE_URL
+    : 'mongodb://localhost:27017/bitfilmsdb',
+  {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  }
+)
 
 app.use(helmet())
 
