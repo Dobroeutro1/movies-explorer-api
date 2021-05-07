@@ -6,7 +6,6 @@ const { NODE_ENV, JWT_SECRET } = process.env
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers
-  console.log(authorization)
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return res.status(409).send({ message: needAuth })
