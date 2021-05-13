@@ -65,7 +65,6 @@ const addMovie = (req, res, next) => {
 
 // Удаляет сохранённый фильм по _id
 const deleteMovie = (req, res, next) => {
-  let deletedMovie
   Movie.findById(req.params.movieId)
     .then((movie) => {
       if (!movie) {
@@ -76,18 +75,16 @@ const deleteMovie = (req, res, next) => {
         throw new ConflictError(dontDeleteFilm, next)
       }
 
-      deletedMovie = movie
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new CastError(filmNotFound, next)
-      }
-      next(err)
-    })
-
-  Movie.deleteOne(deletedMovie)
-    .then((deletingMovie) => {
-      res.send(deletingMovie)
+      Movie.deleteOne(movie)
+        .then((deletingMovie) => {
+          res.send(deletingMovie)
+        })
+        .catch((err) => {
+          if (err.name === 'CastError') {
+            throw new CastError(filmNotFound, next)
+          }
+          next(err)
+        })
     })
     .catch((err) => {
       if (err.name === 'CastError') {
