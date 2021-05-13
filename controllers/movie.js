@@ -11,8 +11,13 @@ const {
 
 // Возвращает все сохранённые пользователем фильмы
 const getMovie = (req, res, next) => {
+  const user = req.user._id
+
   Movie.find({})
-    .then((movie) => res.status(200).send(movie))
+    .then((movies) => {
+      const userMovies = movies.filter((movie) => movie.owner === user)
+      res.status(200).send(userMovies)
+    })
     .catch((err) => {
       err.statusCode = 500
       next(err)
@@ -60,6 +65,7 @@ const addMovie = (req, res, next) => {
 
 // Удаляет сохранённый фильм по _id
 const deleteMovie = (req, res, next) => {
+  let deletedMovie
   Movie.findById(req.params.movieId)
     .then((movie) => {
       if (!movie) {
@@ -69,9 +75,19 @@ const deleteMovie = (req, res, next) => {
       if (movie.owner.toString() !== req.user._id) {
         throw new ConflictError(dontDeleteFilm, next)
       }
-      Movie.remove(movie)
-        .then((deletedMovie) => res.send(deletedMovie))
-        .catch(next())
+
+      deletedMovie = movie
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        throw new CastError(filmNotFound, next)
+      }
+      next(err)
+    })
+
+  Movie.deleteOne(deletedMovie)
+    .then((deletingMovie) => {
+      res.send(deletingMovie)
     })
     .catch((err) => {
       if (err.name === 'CastError') {
