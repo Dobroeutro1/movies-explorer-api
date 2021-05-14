@@ -59,6 +59,9 @@ const movieSchema = new mongoose.Schema({
     required: true,
     type: Object,
   },
+  id: {
+    type: Number,
+  },
 })
 
 module.exports = mongoose.model('movie', movieSchema)

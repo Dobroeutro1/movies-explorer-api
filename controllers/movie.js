@@ -40,7 +40,7 @@ const addMovie = (req, res, next) => {
     id,
   } = req.body
   const owner = req.user._id
-
+  console.log('ID', id)
   Movie.create({
     country,
     director,
