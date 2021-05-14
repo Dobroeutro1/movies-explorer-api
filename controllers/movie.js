@@ -37,6 +37,7 @@ const addMovie = (req, res, next) => {
     nameRU,
     nameEN,
     thumbnail,
+    id,
   } = req.body
   const owner = req.user._id
 
@@ -52,6 +53,7 @@ const addMovie = (req, res, next) => {
     nameEN,
     thumbnail,
     owner,
+    _id: id,
   })
     .then((movie) => res.send(movie))
     .catch((err) => {
