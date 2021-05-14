@@ -53,7 +53,7 @@ const addMovie = (req, res, next) => {
     nameEN,
     thumbnail,
     owner,
-    _id: id,
+    id,
   })
     .then((movie) => res.send(movie))
     .catch((err) => {
