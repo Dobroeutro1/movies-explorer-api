@@ -40,7 +40,6 @@ const addMovie = (req, res, next) => {
     id,
   } = req.body
   const owner = req.user._id
-  console.log('ID', id)
   Movie.create({
     country,
     director,
@@ -67,17 +66,17 @@ const addMovie = (req, res, next) => {
 
 // Удаляет сохранённый фильм по _id
 const deleteMovie = (req, res, next) => {
-  Movie.findById(req.params.movieId)
+  Movie.find({ id: req.params.movieId })
     .then((movie) => {
       if (!movie) {
         throw new NotFoundError(filmNotFound, next)
       }
 
-      if (movie.owner.toString() !== req.user._id) {
+      if (movie[0].owner.toString() !== req.user._id) {
         throw new ConflictError(dontDeleteFilm, next)
       }
 
-      Movie.deleteOne(movie)
+      Movie.deleteOne(movie[0])
         .then((deletingMovie) => {
           res.send(deletingMovie)
         })
