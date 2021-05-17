@@ -68,15 +68,15 @@ const addMovie = (req, res, next) => {
 const deleteMovie = (req, res, next) => {
   Movie.find({ id: req.params.movieId })
     .then((movie) => {
-      if (!movie) {
+      if (movie.length < 1) {
         throw new NotFoundError(filmNotFound, next)
       }
 
-      if (movie[0].owner.toString() !== req.user._id) {
-        throw new ConflictError(dontDeleteFilm, next)
-      }
+      const filterMovie = movie.filter(
+        (filterMovies) => filterMovies.owner === req.user._id
+      )
 
-      Movie.deleteOne(movie[0])
+      Movie.deleteOne(filterMovie[0])
         .then((deletingMovie) => {
           res.send(deletingMovie)
         })
